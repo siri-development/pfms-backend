@@ -1,0 +1,47 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: pfms-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: Sriyadav@1
+      MYSQL_DATABASE: pfms-project
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  redis:
+    image: redis:7
+    container_name: pfms-redis
+    ports:
+      - "6379:6379"
+
+  backend:
+    build:
+      context: ../pfms
+      dockerfile: Dockerfile
+    image: pfms-backend
+    container_name: pfms-backend
+    depends_on:
+      - mysql
+      - redis
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASSWORD: Sriyadav@1
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: S3cr3tKey@Pfms2025LongSecureJwtKey123!
+
+  frontend:
+    build:
+      context: ../pfms-frontend
+    image: pfms-frontend
+    container_name: pfms-frontend
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+
+volumes:
+  mysql-data:
