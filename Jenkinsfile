@@ -7,9 +7,9 @@ pipeline {
             steps {
                 echo 'Building images and deploying containers using Docker Compose'
                 sh '''
-                  docker-compose down
-                  docker-compose build
-                  docker-compose up -d
+                  docker compose down
+                  docker compose build
+                  docker compose up -d
                 '''
             }
         }
@@ -27,7 +27,7 @@ pipeline {
             echo 'CI/CD SUCCESS 🚀 Application is running'
         }
         failure {
-            echo 'CI/CD FAILED ❌'
+            echo 'CI/CD FAILED ❌ Check logs'
         }
     }
 }
