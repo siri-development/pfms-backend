@@ -2,14 +2,17 @@ pipeline {
     agent any
 
     stages {
+
         stage('Build & Deploy using Docker Compose') {
             steps {
                 echo 'Building images and deploying containers using Docker Compose'
-                sh '''
-                  docker-compose down
-                  docker-compose build
-                  docker-compose up -d
-                '''
+                dir('pfms') {
+                    sh '''
+                      docker-compose down
+                      docker-compose build
+                      docker-compose up -d
+                    '''
+                }
             }
         }
 
@@ -22,10 +25,10 @@ pipeline {
 
     post {
         success {
-            echo 'CI/CD SUCCESS 🚀'
+            echo 'CI/CD SUCCESS 🚀 Application is running'
         }
         failure {
-            echo 'CI/CD FAILED ❌'
+            echo 'CI/CD FAILED ❌ Check logs'
         }
     }
 }
