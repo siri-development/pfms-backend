@@ -3,28 +3,12 @@ pipeline {
 
     stages {
 
-        stage('Build Backend (Maven)') {
+        stage('Build & Deploy using Docker Compose') {
             steps {
-                echo 'Building PFMS backend using Maven Wrapper'
-                dir('pfms') {
-                    sh 'chmod +x mvnw'
-                    sh './mvnw clean install -DskipTests'
-                }
-            }
-        }
-
-        stage('Build Docker Images') {
-            steps {
-                echo 'Building Docker images (backend & frontend)'
-                sh 'docker-compose build'
-            }
-        }
-
-        stage('Deploy Containers') {
-            steps {
-                echo 'Stopping old containers and starting new ones'
+                echo 'Building images and deploying containers using Docker Compose'
                 sh '''
                   docker-compose down
+                  docker-compose build
                   docker-compose up -d
                 '''
             }
@@ -40,10 +24,10 @@ pipeline {
 
     post {
         success {
-            echo 'CI/CD SUCCESS 🚀 All services are running'
+            echo 'CI/CD SUCCESS 🚀 Application is running'
         }
         failure {
-            echo 'CI/CD FAILED ❌ Check logs'
+            echo 'CI/CD FAILED ❌'
         }
     }
 }
