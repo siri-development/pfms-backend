@@ -9,18 +9,19 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo 'Building Spring Boot project with Maven Docker image'
-                sh 'mvn clean install -DskipTests'
+                echo 'Building PFMS multi-module project using Maven Wrapper'
+                sh 'chmod +x mvnw'
+                sh './mvnw clean install -DskipTests'
             }
         }
     }
 
     post {
         success {
-            echo 'Build SUCCESS'
+            echo 'BUILD SUCCESS '
         }
         failure {
-            echo 'Build FAILED'
+            echo 'BUILD FAILED '
         }
     }
 }
