@@ -16,7 +16,7 @@ pipeline {
         stage('Build Docker Images') {
             steps {
                 echo 'Building Docker images (backend & frontend)'
-                sh 'docker compose build'
+                sh 'docker-compose build'
             }
         }
 
@@ -24,8 +24,8 @@ pipeline {
             steps {
                 echo 'Stopping old containers and starting new ones'
                 sh '''
-                  docker compose down
-                  docker compose up -d
+                  docker-compose down
+                  docker-compose up -d
                 '''
             }
         }
