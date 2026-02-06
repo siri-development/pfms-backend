@@ -10,18 +10,20 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building PFMS multi-module project using Maven Wrapper'
-                sh 'chmod +x mvnw'
-                sh './mvnw clean install -DskipTests'
+                dir('pfms') {             
+                    sh 'chmod +x mvnw'
+                    sh './mvnw clean install -DskipTests'
+                }
             }
         }
     }
 
     post {
         success {
-            echo 'BUILD SUCCESS '
+            echo 'BUILD SUCCESS'
         }
         failure {
-            echo 'BUILD FAILED '
+            echo 'BUILD FAILED'
         }
     }
 }
