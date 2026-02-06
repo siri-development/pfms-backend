@@ -1,22 +1,15 @@
 pipeline {
-    agent any
-
-    options {
-        skipDefaultCheckout(false)
+    agent {
+        docker {
+            image 'maven:3.9.9-eclipse-temurin-17'
+            args '-v /root/.m2:/root/.m2'
+        }
     }
 
     stages {
-
-        stage('Checkout') {
-            steps {
-                echo 'Source code checked out by Jenkins'
-                sh 'git status'
-            }
-        }
-
         stage('Build') {
             steps {
-                echo 'Building Spring Boot project'
+                echo 'Building Spring Boot project with Maven Docker image'
                 sh 'mvn clean install -DskipTests'
             }
         }
@@ -24,10 +17,10 @@ pipeline {
 
     post {
         success {
-            echo 'Build completed successfully'
+            echo 'Build SUCCESS'
         }
         failure {
-            echo 'Build failed'
+            echo 'Build FAILED'
         }
     }
 }
