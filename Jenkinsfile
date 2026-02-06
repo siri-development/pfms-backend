@@ -1,15 +1,19 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:3.9.9-eclipse-temurin-17'
-        }
-    }
+    agent any
 
     stages {
+        stage('Checkout') {
+            steps {
+                deleteDir()
+                git branch: 'master',
+                    url: 'https://github.com/siri-development/pfms-backend.git',
+                    credentialsId: 'github-pat'
+            }
+        }
+
         stage('Build') {
             steps {
-                echo 'Building project...'
-                sh 'mvn clean install'
+                echo 'Build stage reached'
             }
         }
     }
