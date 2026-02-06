@@ -1,20 +1,33 @@
 pipeline {
     agent any
 
+    options {
+        skipDefaultCheckout(false)
+    }
+
     stages {
+
         stage('Checkout') {
             steps {
-                deleteDir()
-                git branch: 'master',
-                    url: 'https://github.com/siri-development/pfms-backend.git',
-                    credentialsId: 'github-pat'
+                echo 'Source code checked out by Jenkins'
+                sh 'git status'
             }
         }
 
         stage('Build') {
             steps {
-                echo 'Build stage reached'
+                echo 'Building Spring Boot project'
+                sh 'mvn clean install -DskipTests'
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'Build completed successfully'
+        }
+        failure {
+            echo 'Build failed'
         }
     }
 }
