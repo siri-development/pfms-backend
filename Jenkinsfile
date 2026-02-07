@@ -1,23 +1,60 @@
 pipeline {
     agent any
 
+    environment {
+        BACKEND_REPO  = 'https://github.com/siri-development/pfms-backend.git'
+        FRONTEND_REPO = 'https://github.com/siri-development/pfms-frontend.git'
+    }
+
     stages {
 
-        stage('Build & Deploy using Docker Compose') {
+        stage('Checkout Backend') {
             steps {
-                echo 'Building images and deploying containers using Docker Compose'
-                dir('pfms') {
+                echo 'Cloning backend repository'
+                checkout scm
+            }
+        }
+
+        stage('Checkout Frontend') {
+            steps {
+                echo 'Cloning frontend repository'
+                dir('..') {
                     sh '''
-                      docker-compose down
-                      docker-compose build
-                      docker-compose up -d
+                        rm -rf pfms-frontend
+                        git clone ${FRONTEND_REPO}
                     '''
                 }
             }
         }
 
-        stage('Cleanup Old Images') {
+        stage('Build Backend (Maven)') {
             steps {
+                echo 'Building Spring Boot backend'
+                dir('pfms') {
+                    sh '''
+                        chmod +x mvnw
+                        ./mvnw clean install -DskipTests
+                    '''
+                }
+            }
+        }
+
+        stage('Build & Deploy (Docker Compose)') {
+            steps {
+                echo 'Building images and starting containers'
+                dir('pfms') {
+                    sh '''
+                        docker-compose down
+                        docker-compose build
+                        docker-compose up -d
+                    '''
+                }
+            }
+        }
+
+        stage('Cleanup Dangling Images') {
+            steps {
+                echo 'Cleaning unused Docker images'
                 sh 'docker image prune -f'
             }
         }
@@ -25,10 +62,10 @@ pipeline {
 
     post {
         success {
-            echo 'CI/CD SUCCESS 🚀 Application is running'
+            echo 'CI/CD PIPELINE SUCCESS ✅'
         }
         failure {
-            echo 'CI/CD FAILED ❌ Check logs'
+            echo 'CI/CD PIPELINE FAILED ❌'
         }
     }
 }
